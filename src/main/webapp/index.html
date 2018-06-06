@@ -2,10 +2,81 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-    <title>test</title>
+    <link rel="stylesheet" href="/css/pure-min.css"/>
+    <title>Trader Gateway</title>
 </head>
 <body>
-testtest
+<div class="pure-g">
+    <div class="pure-u-1">
+        <div class="pure-form pure-form-aligned">
+            <fieldset>
+                <div class="pure-control-group">
+                    <label for="name">Name</label>
+                    <input id="name" type="text" placeholder="name">
+                </div>
+                <div class="pure-control-group">
+                    <label for="password">Password</label>
+                    <input id="password" type="password" placeholder="Password">
+                </div>
+                <div class="pure-control-group">
+                    <button class="pure-button pure-button-primary" id="signIn">Sign in</button>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
 </body>
+<style>
+    html {
+        display: table;
+        height: 100%;
+        width: 100%;
+        background: url('/images/bright.png') repeat;
+    }
+
+    body {
+        display: table-cell;
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/jquery.cookie.min.js"></script>
+<script>
+    $('#signIn').click(function(){
+        var name = $('#name').val();
+        var password = $('#password').val();
+        if (name === "" || password === "") {
+            alert('Please input your name and password!');
+            return false;
+        }
+        else {
+            var data = {
+                name: name,
+                password: password
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/token',
+                dataType : "json",
+                processData: false,
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                async: false,
+                success: function(response) {
+                    console.log('success\n');
+                    console.log(response);
+                    var token = response.token;
+                    if (token !== null) {
+                        $.cookie('token', token);
+                        location.href = '/page.html';
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        }
+    });
+</script>
 </html>

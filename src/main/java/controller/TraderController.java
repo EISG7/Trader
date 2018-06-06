@@ -52,7 +52,6 @@ public class TraderController {
     @ResponseBody
     public Map<String, Object> register(@RequestBody String jsonStr) {
         Map<String, Object> resultMap = new HashMap<>();
-        System.out.println(jsonStr);
         Trader trader = gson.fromJson(jsonStr, Trader.class);
         String token = traderService.register(trader.getName(), trader.getPassword());
         resultMap.put("success", true);
