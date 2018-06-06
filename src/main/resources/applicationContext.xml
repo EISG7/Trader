@@ -77,10 +77,12 @@
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
+    <bean id="gson" class="com.google.gson.Gson" />
 
     <jpa:repositories base-package="dao"/>
 
     <bean id="traderService" class="service.impl.TraderServiceImpl"/>
+    <bean id="tokenMap" class="java.util.HashMap" />
     <!-- 事务 -->
     <tx:advice id="txAdvice">
         <tx:attributes>

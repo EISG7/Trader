@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Table
 public class Trader {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     private String password;
@@ -15,6 +15,9 @@ public class Trader {
     public Trader(String name, String password) {
         this.name = name;
         this.password = password;
+    }
+
+    public Trader() {
     }
 
     public int getId() {
