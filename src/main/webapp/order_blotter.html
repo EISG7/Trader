@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/pure-min.css"/>
+    <link rel="stylesheet" href="/css/jquery.dataTables.min.css"/>
+    <title>Order Blotter</title>
+</head>
+<style>
+    body {
+        line-height: 1.6;
+        font-family: sans-serif;
+        font-weight: 100;
+        letter-spacing: 0.01em;
+    }
+
+    .custom-restricted-width {
+        display: inline-block;
+        background: #191818;
+        color: #777777;
+        top: 0;
+        bottom: 0;
+        position: fixed;
+    }
+
+    .pure-menu-heading {
+        font-size: 125%;
+        font-weight: 300;
+        letter-spacing: 0.1em;
+        color: #fff;
+        margin-top: 0;
+        padding: 0.5em 0.8em;
+        text-transform: uppercase;
+    }
+
+    .content {
+        box-sizing: border-box;
+        padding-left: 155px;
+    }
+
+    .heading {
+        max-width: 768px;
+        margin: 0 auto;
+        padding: 1em;
+        text-align: center;
+        color: #777777;
+        border-bottom: 1px solid #eee;
+        background: #fff;
+        letter-spacing: 0.05em;
+        font-size: larger;
+    }
+</style>
+<body>
+<div class="pure-menu custom-restricted-width">
+    <span class="pure-menu-heading" style="color: #fff">Trader UI</span>
+    <ul class="pure-menu-list">
+        <li class="pure-menu-item"><a href="/market_depth.html" class="pure-menu-link">Market Depth</a></li>
+        <li class="pure-menu-item"><a href="#" class="pure-menu-link">Order Blotter</a></li>
+        <li class="pure-menu-item"><a href="#" class="pure-menu-link">Initiate Order</a></li>
+    </ul>
+</div>
+<div class="content">
+    <div class="pure-g">
+        <div class="pure-u-1 heading">
+            <span>Order Blotter</span>
+        </div>
+    </div>
+    <div class="pure-g">
+        <div class="pure-u-1">
+            <table class="display" id="dataTable">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Broker</th>
+                    <th>Product</th>
+                    <th>Period</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th>Initiator</th>
+                    <th>Initiator Company</th>
+                    <th>Initiator Side</th>
+                    <th>Completion</th>
+                    <th>Completion Company</th>
+                    <th>Completion Side</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/jquery.dataTables.min.js"></script>
+<script>
+    $(function(){
+        $('#dataTable').DataTable({
+            bFilter: false,
+            ajax: {
+                url: '/orders',
+                dataSrc: 'rows'
+            },
+            columns: [
+                {data: 'id'},
+                {data: 'broker'},
+                {data: 'product'},
+                {data: 'period'},
+                {data: 'price'},
+                {data: 'quantity'},
+                {data: 'initiatorName'},
+                {data: 'initiatorComp'},
+                {data: 'initiatorSide'},
+                {data: 'completionName'},
+                {data: 'completionComp'},
+                {data: 'completionSide'}
+            ]
+        });
+    })
+</script>
+</html>

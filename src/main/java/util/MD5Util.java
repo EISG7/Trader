@@ -1,11 +1,11 @@
-package common;
+package util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class MD5Util {
+class MD5Util {
     /* 利用MD5进行加密 */
-    public static String encoderByMd5(String str) {
+    static String encoderByMd5(String str) {
         //确定计算方法
         MessageDigest md5;
         String md5str = null;

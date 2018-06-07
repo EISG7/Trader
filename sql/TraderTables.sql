@@ -11,9 +11,9 @@ drop table if exists Product;
 drop table if exists Trader;
 
 /*==============================================================*/
-/* Table: "Order"                                               */
+/* Table: "Orders"                                               */
 /*==============================================================*/
-create table "Order"
+create table "Orders"
 (
    id                   int not null,
    broker               varchar(20) not null,

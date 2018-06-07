@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/pure-min.css"/>
+    <title>Market Depth</title>
+</head>
+<style>
+    body {
+        line-height: 1.6;
+        font-family: sans-serif;
+        font-weight: 100;
+        letter-spacing: 0.01em;
+    }
+    .custom-restricted-width {
+        display: inline-block;
+        background: #191818;
+        color: #777777;
+        top: 0;
+        bottom: 0;
+        position: fixed;
+    }
+    .pure-menu-heading {
+        font-size: 125%;
+        font-weight: 300;
+        letter-spacing: 0.1em;
+        color: #fff;
+        margin-top: 0;
+        padding: 0.5em 0.8em;
+        text-transform: uppercase;
+    }
+    .content {
+        box-sizing: border-box;
+        padding-left: 155px;
+    }
+    .heading {
+        max-width: 768px;
+        margin: 0 auto;
+        padding: 1em;
+        text-align: center;
+        color: #777777;
+        border-bottom: 1px solid #eee;
+        background: #fff;
+        letter-spacing: 0.05em;
+    }
+</style>
+<body>
+<div class="pure-menu custom-restricted-width">
+    <span class="pure-menu-heading" style="color: #fff">Trader UI</span>
+    <ul class="pure-menu-list">
+        <li class="pure-menu-item"><a href="#" class="pure-menu-link">Market Depth</a></li>
+        <li class="pure-menu-item"><a href="/order_blotter.html" class="pure-menu-link">Order Blotter</a></li>
+        <li class="pure-menu-item"><a href="#" class="pure-menu-link">Initiate Order</a></li>
+    </ul>
+</div>
+<div class="content">
+    <div class="pure-g">
+        <div class="pure-u-1 heading">
+            <label for="broker">Select a Broker</label>
+            <select id="broker">
+            </select>
+            <label for="product">Select a Product</label>
+            <select id="product"></select>
+        </div>
+    </div>
+</div>
+</body>
+<script src="/js/jquery.min.js"></script>
+<script>
+    var brokers = [];
+    $(function(){
+        $('#broker')[0].options[0] = new Option('Select a Broker', '');
+        $('#product')[0].options[0] = new Option('Select a Product', '');
+        $.ajax({
+            type: 'GET',
+            url: '/brokers',
+            dataType: "json",
+            contentType: "application/json",
+            success: function (response) {
+                if (response.success === true) {
+                    brokers = response.brokers;
+                    var select = $('#broker')[0];
+                    var b;
+                    for (var i = 1; i < brokers.length + 1; i++) {
+                        b = brokers[i - 1];
+                        for (var it in b) {
+                            select.options[i] = new Option(it, it);
+                        }
+                    }
+                }
+            }
+        });
+    });
+    $('#broker').change(function(){
+        var e = $('#product').empty();
+        var s = e[0];
+        s.options[0] = new Option('Select a Product', '');
+        $.ajax({
+            type: 'GET',
+            url: '/product/' + $('#broker').val(),
+            dataType: "json",
+            contentType: "application/json",
+            success: function (response) {
+                if (response.success === true) {
+                    var product = response.product;
+                    for (var i = 1; i < product.length + 1; i++) {
+                        var p = product[i - 1];
+                        s.options[i] = new Option(p.code, p.id);
+                    }
+                }
+            }
+        });
+    });
+    $('#product').change(function(){
+        // TODO: Connect to Broker and get the market depth (through WebSocket?)
+    });
+</script>
+</html>

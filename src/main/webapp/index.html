@@ -43,6 +43,34 @@
 <script src="/js/jquery.min.js"></script>
 <script src="/js/jquery.cookie.min.js"></script>
 <script>
+    $(function(){
+       var token = $.cookie('token');
+       var data = {token: token};
+       if (token != null) {
+           $.ajax({
+               type: 'PUT',
+               url: '/token',
+               dataType : "json",
+               processData: false,
+               contentType: "application/json",
+               data: JSON.stringify(data),
+               async: false,
+               success: function(response) {
+                   if (response.success === true) {
+                       console.log('success');
+                       location.href = '/market_depth.html';
+                   }
+                   else {
+                       $.cookie('token', '', { expires: -1 });
+                       console.log('failed');
+                   }
+               },
+               error: function (error) {
+                   console.log(error);
+               }
+           })
+       }
+    });
     $('#signIn').click(function(){
         var name = $('#name').val();
         var password = $('#password').val();
@@ -64,12 +92,10 @@
                 data: JSON.stringify(data),
                 async: false,
                 success: function(response) {
-                    console.log('success\n');
-                    console.log(response);
                     var token = response.token;
                     if (token !== null) {
                         $.cookie('token', token);
-                        location.href = '/page.html';
+                        location.href = '/market_depth.html';
                     }
                 },
                 error: function (error) {

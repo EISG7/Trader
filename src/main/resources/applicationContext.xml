@@ -82,6 +82,16 @@
     <jpa:repositories base-package="dao"/>
 
     <bean id="traderService" class="service.impl.TraderServiceImpl"/>
+    <bean id="orderService" class="service.impl.OrderServiceImpl"/>
+    <bean id="productService" class="service.impl.ProductServiceImpl"/>
+    <bean id="brokerService" class="service.impl.BrokerServiceImpl">
+        <property name="brokers">
+            <map>
+                <entry key="broker1" value="ip1" />
+                <entry key="broker2" value="ip2" />
+            </map>
+        </property>
+    </bean>
     <bean id="tokenMap" class="java.util.HashMap" />
     <!-- 事务 -->
     <tx:advice id="txAdvice">

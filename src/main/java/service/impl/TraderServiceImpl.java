@@ -1,16 +1,17 @@
 package service.impl;
 
-import common.PasswordUtil;
-import common.TokenUtil;
+import util.AESUtil;
+import util.PasswordUtil;
+import util.TokenUtil;
 import dao.TraderDao;
 import entity.Trader;
 import org.springframework.beans.factory.annotation.Autowired;
 import service.TraderService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.HashMap;
 
 public class TraderServiceImpl implements TraderService {
 
@@ -48,5 +49,19 @@ public class TraderServiceImpl implements TraderService {
         String token = TokenUtil.getToken(t.getId());
         tokenMap.put(t.getId(), token);
         return token;
+    }
+
+    @Override
+    public boolean checkToken(String token) {
+        try {
+            if (token == null) return false;
+            String id = AESUtil.decode(token);
+            return id != null &&
+                    tokenMap.containsKey(Integer.valueOf(id)) &&
+                    tokenMap.get(Integer.valueOf(id)).equals(token);
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 }

@@ -1,4 +1,4 @@
-package common;
+package util;
 
 public class TokenUtil {
     public static String getToken(int userId) {

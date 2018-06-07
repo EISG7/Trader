@@ -1,4 +1,4 @@
-package common;
+package util;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;

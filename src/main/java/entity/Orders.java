@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table
-public class Order {
+public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -22,7 +22,7 @@ public class Order {
     private String completionComp;
     private Timestamp completionTime;
 
-    public Order(String broker, String code, String product, String period, int price, int quantity, String initiatorName, String initiatorComp, boolean initiatorSide, String completionName, String completionComp, Timestamp completionTime) {
+    public Orders(String broker, String code, String product, String period, int price, int quantity, String initiatorName, String initiatorComp, boolean initiatorSide, String completionName, String completionComp, Timestamp completionTime) {
         this.broker = broker;
         this.code = code;
         this.product = product;
@@ -37,7 +37,7 @@ public class Order {
         this.completionTime = completionTime;
     }
 
-    public Order() {
+    public Orders() {
     }
 
     public int getId() {
@@ -112,7 +112,7 @@ public class Order {
         this.initiatorComp = initiatorComp;
     }
 
-    public boolean isInitiatorSide() {
+    public boolean getInitiatorSide() {
         return initiatorSide;
     }
 
