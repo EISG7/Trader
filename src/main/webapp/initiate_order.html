@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/pure-min.css"/>
+    <title>Market Depth</title>
+</head>
+<style>
+    body {
+        line-height: 1.6;
+        font-family: sans-serif;
+        font-weight: 100;
+        letter-spacing: 0.01em;
+    }
+    .custom-restricted-width {
+        display: inline-block;
+        background: #191818;
+        color: #777777;
+        top: 0;
+        bottom: 0;
+        position: fixed;
+    }
+    .pure-menu-heading {
+        font-size: 125%;
+        font-weight: 300;
+        letter-spacing: 0.1em;
+        color: #fff;
+        margin-top: 0;
+        padding: 0.5em 0.8em;
+        text-transform: uppercase;
+    }
+    .content {
+        box-sizing: border-box;
+        padding-left: 155px;
+    }
+    .heading {
+        max-width: 768px;
+        margin: 0 auto;
+        padding: 1em;
+        text-align: center;
+        color: #777777;
+        border-bottom: 1px solid #eee;
+        background: #fff;
+        letter-spacing: 0.05em;
+        font-size: larger;
+    }
+</style>
+<body>
+<div class="pure-menu custom-restricted-width">
+    <span class="pure-menu-heading" style="color: #fff">Trader UI</span>
+    <ul class="pure-menu-list">
+        <li class="pure-menu-item"><a href="/market_depth.html" class="pure-menu-link">Market Depth</a></li>
+        <li class="pure-menu-item"><a href="/order_blotter.html" class="pure-menu-link">Order Blotter</a></li>
+        <li class="pure-menu-item"><a href="#" class="pure-menu-link">Initiate Order</a></li>
+    </ul>
+</div>
+<div class="content">
+    <div class="pure-g">
+        <div class="pure-u-1 heading">
+            <span>Initiate Order</span>
+        </div>
+    </div>
+    <div class="pure-g">
+        <div class="pure-u-1" style="margin: 0 auto;padding: 1em;text-align: center;">
+            <label for="broker">Select a Broker</label>
+            <select id="broker"></select>
+            <label for="product">Select a Product</label>
+            <select id="product"></select>
+            <label for="level">$ per level: </label>
+            <input id="level" disabled>
+            <div class="pure-form pure-form-aligned">
+                <fieldset>
+                    <div class="pure-control-group">
+                        <label for="type">Type</label>
+                        <select id="type">
+                            <option value="0">Sell</option>
+                            <option value="1">Buy - Market Order</option>
+                            <option value="2">Buy - Limit Order</option>
+                            <option value="3">Buy - Stop Order</option>
+                            <option value="4">Cancel Order</option>
+                        </select>
+                    </div>
+                    <div class="pure-control-group" id="inputQty">
+                        <label for="quantity">Quantity</label>
+                        <input id="quantity" type="number" placeholder="Quantity">
+                    </div>
+                    <div class="pure-control-group" id="inputPrice">
+                        <label for="price">Unit Price</label>
+                        <input id="price" type="number" placeholder="Price">
+                    </div>
+                    <div class="pure-control-group" id="inputOrderId" style="display: none">
+                        <label for="orderId">Order Id</label>
+                        <select id="orderId"></select>
+                    </div>
+                    <div class="pure-control-group">
+                        <button class="pure-button pure-button-primary" id="placeOrder">Initiate Order</button>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/jquery.cookie.min.js"></script>
+<script src="/js/checkLogin.js"></script>
+<script>
+    var brokers = [];
+    var product = [];
+    var orders = [];
+    var step;
+    var type;
+    $(function(){
+        $('#broker')[0].options[0] = new Option('Select a Broker', '');
+        $('#product')[0].options[0] = new Option('Select a Product', '');
+        $.ajax({
+            type: 'GET',
+            url: '/brokers',
+            dataType: "json",
+            contentType: "application/json",
+            success: function (response) {
+                if (response.success === true) {
+                    brokers = response.brokers;
+                    var select = $('#broker')[0];
+                    var b;
+                    for (var i = 1; i < brokers.length + 1; i++) {
+                        b = brokers[i - 1];
+                        for (var it in b) {
+                            select.options[i] = new Option(it, it);
+                        }
+                    }
+                }
+            }
+        });
+        $.ajax({
+            type: 'GET',
+            url: '/ordersNotFinished/' + $.cookie('name'),
+            dataType: "json",
+            contentType: "application/json",
+            success: function (response) {
+                if (response.success === true) {
+                    orders = response.orders;
+                    var select = $('#orderId')[0];
+                    var b;
+                    for (var i = 0; i < orders.length; i++) {
+                        b = orders[i];
+                        select.options[i] = new Option(b.id, b.id);
+                    }
+                }
+            }
+        });
+
+    });
+    $('#broker').change(function(){
+        var e = $('#product').empty();
+        var s = e[0];
+        s.options[0] = new Option('Select a Product', '');
+        $.ajax({
+            type: 'GET',
+            url: '/product/' + $('#broker').val(),
+            dataType: "json",
+            contentType: "application/json",
+            success: function (response) {
+                if (response.success === true) {
+                    product = response.product;
+                    for (var i = 1; i < product.length + 1; i++) {
+                        var p = product[i - 1];
+                        s.options[i] = new Option(p.code, p.id);
+                    }
+                }
+            }
+        });
+    });
+    $('#product').change(function(){
+        var id = $('#product').val();
+        for (var i = 0; i < product.length; i++) {
+            var p = product[i];
+            if (p.id == id) {
+                console.log(p);
+                step = p.level;
+                $('#price').attr('step', step);
+            }
+        }
+        $('#level').val(step);
+    });
+    $('#type').change(function(){
+        var Qty = $('#inputQty');
+        var Pri = $('#inputPrice');
+        var Oid = $('#inputOrderId');
+        type = $('#type').val();
+        switch (type) {
+            case '1':
+                Oid.hide();
+                Qty.show();
+                Pri.hide();
+                break;
+            case '4':
+                Oid.show();
+                Qty.hide();
+                Pri.hide();
+                break;
+            default:
+                Oid.hide();
+                Qty.show();
+                Pri.show();
+        }
+    });
+    $('#price').change(function(){
+        var price = $('#price').val();
+
+    });
+    $('#placeOrder').click(function(){
+        type = $('#type').val();
+        var data = {
+            name: $.cookie('name'),
+            company: $.cookie('name'),
+            type: type,
+            broker: $('#broker').val(),
+            product: $('#product').val()
+        };
+        var Qty = $('#quantity');
+        var Pri = $('#price');
+        var Oid = $('#orderId');
+
+        switch (type) {
+            case '1': // Market
+                data.quantity =Qty.val();
+                break;
+            case '4': // Cancel
+                data.orderId = Oid.val();
+                break;
+            default: // Sell, Limited ,Stop
+                data.quantity = Qty.val();
+                data.price = Pri.val();
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/orders',
+            dataType : "json",
+            processData: false,
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            async: false,
+            success: function(response) {
+                if (response.success === true) {
+                    alert('Order placed, processing.');
+                }
+            },
+            error: function (error) {
+                alert('error!');
+                console.log(error);
+            }
+        });
+    });
+
+</script>
+</html>

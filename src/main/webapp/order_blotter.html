@@ -56,7 +56,7 @@
     <ul class="pure-menu-list">
         <li class="pure-menu-item"><a href="/market_depth.html" class="pure-menu-link">Market Depth</a></li>
         <li class="pure-menu-item"><a href="#" class="pure-menu-link">Order Blotter</a></li>
-        <li class="pure-menu-item"><a href="#" class="pure-menu-link">Initiate Order</a></li>
+        <li class="pure-menu-item"><a href="/initiate_order.html" class="pure-menu-link">Initiate Order</a></li>
     </ul>
 </div>
 <div class="content">
@@ -93,12 +93,15 @@
 </body>
 <script src="/js/jquery.min.js"></script>
 <script src="/js/jquery.dataTables.min.js"></script>
+<script src="/js/jquery.cookie.min.js"></script>
+<script src="/js/checkLogin.js"></script>
 <script>
     $(function(){
         $('#dataTable').DataTable({
             bFilter: false,
+            ordering: false,
             ajax: {
-                url: '/orders',
+                url: '/orders/' + $.cookie('name'),
                 dataSrc: 'rows'
             },
             columns: [

@@ -35,27 +35,15 @@ public class TraderController {
     @PostMapping("/token")
     @ResponseBody
     public Map<String, Object> login(@RequestBody String jsonStr) {
-        Map<String, Object> resultMap = new HashMap<>();
         Trader trader = gson.fromJson(jsonStr, Trader.class);
-        String token = traderService.login(trader.getName(), trader.getPassword());
-        if (token != null) {
-            resultMap.put("success", true);
-            resultMap.put("token", token);
-            return resultMap;
-        }
-        resultMap.put("success", false);
-        return resultMap;
+        return traderService.login(trader.getName(), trader.getPassword());
     }
 
     @PostMapping("/trader")
     @ResponseBody
     public Map<String, Object> register(@RequestBody String jsonStr) {
-        Map<String, Object> resultMap = new HashMap<>();
         Trader trader = gson.fromJson(jsonStr, Trader.class);
-        String token = traderService.register(trader.getName(), trader.getPassword());
-        resultMap.put("success", true);
-        resultMap.put("token", token);
-        return resultMap;
+        return traderService.register(trader);
     }
 
     @PutMapping("/token")

@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table
-public class Orders {
+public class Orders implements Comparable<Orders>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -21,6 +21,8 @@ public class Orders {
     private String completionName;
     private String completionComp;
     private Timestamp completionTime;
+    private int type;              // 0, 1, 2, 3, 4
+    private boolean status;     // true: finished, false: not finished
 
     public Orders(String broker, String code, String product, String period, int price, int quantity, String initiatorName, String initiatorComp, boolean initiatorSide, String completionName, String completionComp, Timestamp completionTime) {
         this.broker = broker;
@@ -142,5 +144,26 @@ public class Orders {
 
     public void setCompletionTime(Timestamp completionTime) {
         this.completionTime = completionTime;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    @Override
+    public int compareTo(Orders o) {
+        return o.getCompletionTime().compareTo(this.getCompletionTime());
     }
 }

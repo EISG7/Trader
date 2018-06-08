@@ -1,0 +1,1 @@
+if ($.cookie('token') == null) location.href = '/';

@@ -1,7 +1,7 @@
 package util;
 
 public class TokenUtil {
-    public static String getToken(int userId) {
-        return AESUtil.encode(Integer.toString(userId));
+    public static String getToken(Object o) {
+        return AESUtil.encode(o.toString());
     }
 }

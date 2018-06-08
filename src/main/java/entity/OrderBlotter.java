@@ -1,6 +1,6 @@
 package entity;
 
-public class OrderView {
+public class OrderBlotter {
     private int id;
     private String broker;
     private String product;
@@ -14,7 +14,7 @@ public class OrderView {
     private String completionComp;
     private String completionSide;
 
-    public OrderView(Orders order) {
+    public OrderBlotter(Orders order) {
         this.id = order.getId();
         this.broker = order.getBroker();
         this.product = order.getProduct();
@@ -26,6 +26,24 @@ public class OrderView {
         this.initiatorSide = order.getInitiatorSide() ? "Buy" : "Sell";
         this.completionName = order.getCompletionName();
         this.completionComp = order.getCompletionComp();
+        this.completionSide = order.getInitiatorSide() ? "Sell" : "Buy";
+    }
+
+    public OrderBlotter(Orders order, String name) {
+        this.id = order.getId();
+        this.broker = order.getBroker();
+        this.product = order.getProduct();
+        this.period = order.getPeriod();
+        this.price = order.getPrice();
+        this.quantity = order.getQuantity();
+        boolean nameEquals = order.getInitiatorName().equals(name) || order.getCompletionName().equals(name);
+        if (nameEquals) {
+            this.initiatorName = order.getInitiatorName();
+            this.initiatorComp = order.getInitiatorComp();
+            this.completionName = order.getCompletionName();
+            this.completionComp = order.getCompletionComp();
+        }
+        this.initiatorSide = order.getInitiatorSide() ? "Buy" : "Sell";
         this.completionSide = order.getInitiatorSide() ? "Sell" : "Buy";
     }
 

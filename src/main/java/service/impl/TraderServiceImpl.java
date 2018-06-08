@@ -8,17 +8,14 @@ import entity.Trader;
 import org.springframework.beans.factory.annotation.Autowired;
 import service.TraderService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class TraderServiceImpl implements TraderService {
 
     @Autowired
     private TraderDao traderDao;
     @Autowired
-    private HashMap<Integer, String> tokenMap;
+    private HashMap<String, String> tokenMap;
 
     @Override
     public List<Trader> getAllTraders() {
@@ -29,36 +26,46 @@ public class TraderServiceImpl implements TraderService {
     }
 
     @Override
-    public String login(String name, String password) {
+    public Map<String, Object> login(String name, String password) {
+        Map<String, Object> result = new HashMap<>();
         Optional<Trader> ot = traderDao.findByName(name);
         if (ot.isPresent()) {
             Trader t = ot.get();
             if (PasswordUtil.checkPassword(password, t.getPassword())) {
-                String token = TokenUtil.getToken(t.getId());
-                tokenMap.put(t.getId(), token);
-                return token;
+                String token = TokenUtil.getToken(name);
+                tokenMap.put(name, token);
+                result.put("success", true);
+                result.put("trader", name);
+                result.put("company", t.getCompany());
+                result.put("token", token);
+                return result;
             }
         }
-        return null;
+        result.put("success", false);
+        return result;
     }
 
     @Override
-    public String register(String name, String password) {
-        Trader t = new Trader(name, PasswordUtil.getEncryptedPassword(password));
-        traderDao.save(t);
-        String token = TokenUtil.getToken(t.getId());
-        tokenMap.put(t.getId(), token);
-        return token;
+    public Map<String, Object> register(Trader trader) {
+        Map<String, Object> result = new HashMap<>();
+        trader.setPassword(PasswordUtil.getEncryptedPassword(trader.getPassword()));
+        traderDao.save(trader);
+        String token = TokenUtil.getToken(trader.getId());
+        tokenMap.put(trader.getName(), token);
+        result.put("success", true);
+        result.put("trader", trader.getName());
+        result.put("token", token);
+        return result;
     }
 
     @Override
     public boolean checkToken(String token) {
         try {
             if (token == null) return false;
-            String id = AESUtil.decode(token);
-            return id != null &&
-                    tokenMap.containsKey(Integer.valueOf(id)) &&
-                    tokenMap.get(Integer.valueOf(id)).equals(token);
+            String name = AESUtil.decode(token);
+            return name != null &&
+                    tokenMap.containsKey(name) &&
+                    tokenMap.get(name).equals(token);
         }
         catch (Exception e) {
             return false;

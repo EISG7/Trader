@@ -10,10 +10,27 @@ public class Trader {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    private String company;
     private String password;
 
     public Trader(String name, String password) {
         this.name = name;
+        this.company = "MS";
+        this.password = password;
+    }
+
+    public Trader(String name, String company, String password) {
+        this.name = name;
+        this.company = company;
         this.password = password;
     }
 

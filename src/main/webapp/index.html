@@ -62,6 +62,7 @@
                    }
                    else {
                        $.cookie('token', '', { expires: -1 });
+                       $.cookie('name', '', { expires: -1 });
                        console.log('failed');
                    }
                },
@@ -93,8 +94,12 @@
                 async: false,
                 success: function(response) {
                     var token = response.token;
+                    var name = response.trader;
+                    var company = response.company;
                     if (token !== null) {
                         $.cookie('token', token);
+                        $.cookie('name', name);
+                        $.cookie('company', company);
                         location.href = '/market_depth.html';
                     }
                 },
