@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/pure-min.css"/>
+    <link rel="stylesheet" href="/css/jquery.dataTables.min.css"/>
     <title>Market Depth</title>
 </head>
 <style>
@@ -63,13 +64,44 @@
             <select id="product"></select>
         </div>
     </div>
+    <div class="pure-g">
+        <div class="pure-u-1">
+            <table class="display" id="dataTable">
+                <thead>
+                <tr>
+                    <th>Price</th>
+                    <th>Vol</th>
+                    <th>Level</th>
+                    <th>Side</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 </body>
 <script src="/js/jquery.min.js"></script>
+<script src="/js/jquery.dataTables.min.js"></script>
 <script src="/js/jquery.cookie.min.js"></script>
 <script src="/js/checkLogin.js"></script>
 <script>
     var brokers = [];
+    var broker, product;
+    var table = $('#dataTable').DataTable({
+        columns: [
+            {data: 'price'},
+            {data: 'vol'},
+            {data: 'level'},
+            {data: 'side'}
+        ]
+    });
+    function onMessage(evt){
+        console.log(evt.data);
+        table.clear().draw();
+        table.rows.add(JSON.parse(evt.data)).draw();
+    }
     $(function(){
         $('#broker')[0].options[0] = new Option('Select a Broker', '');
         $('#product')[0].options[0] = new Option('Select a Product', '');
@@ -92,14 +124,16 @@
                 }
             }
         });
+        wsocket = new WebSocket("ws://localhost:8080/wsTest");
     });
     $('#broker').change(function(){
         var e = $('#product').empty();
         var s = e[0];
         s.options[0] = new Option('Select a Product', '');
+        broker = $('#broker').val();
         $.ajax({
             type: 'GET',
-            url: '/product/' + $('#broker').val(),
+            url: '/product/' + broker,
             dataType: "json",
             contentType: "application/json",
             success: function (response) {
@@ -107,14 +141,17 @@
                     var product = response.product;
                     for (var i = 1; i < product.length + 1; i++) {
                         var p = product[i - 1];
-                        s.options[i] = new Option(p.code, p.id);
+                        s.options[i] = new Option(p.code, p.code);
                     }
                 }
             }
         });
+        wsocket.onmessage = onMessage;
     });
     $('#product').change(function(){
-        // TODO: Connect to Broker and get the market depth (through WebSocket?)
+        product = $('#product').val();
+        var data = { broker: broker, product: product};
+        wsocket.send(JSON.stringify(data));
     });
 </script>
 </html>
