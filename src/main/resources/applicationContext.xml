@@ -21,9 +21,12 @@
     <context:component-scan base-package="util">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Component"/>
     </context:component-scan>
-    <mvc:default-servlet-handler/>
     <!-- 配置注解驱动 可以将request参数与绑定到controller参数上 -->
     <mvc:annotation-driven/>
+    <mvc:default-servlet-handler/>
+    <mvc:resources location="./css/" mapping="/css/**"/>
+    <mvc:resources location="./js/" mapping="/js/**"/>
+    <mvc:resources location="./images/" mapping="/images/**"/>
     <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
         <property name="viewResolvers">
             <list>

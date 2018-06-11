@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/pure-min.css"/>
+    <link rel="stylesheet" href="./css/pure-min.css"/>
     <title>Market Depth</title>
 </head>
 <style>
@@ -49,8 +49,8 @@
 <div class="pure-menu custom-restricted-width">
     <span class="pure-menu-heading" style="color: #fff">Trader UI</span>
     <ul class="pure-menu-list">
-        <li class="pure-menu-item"><a href="/market_depth.html" class="pure-menu-link">Market Depth</a></li>
-        <li class="pure-menu-item"><a href="/order_blotter.html" class="pure-menu-link">Order Blotter</a></li>
+        <li class="pure-menu-item"><a href="market_depth.html" class="pure-menu-link">Market Depth</a></li>
+        <li class="pure-menu-item"><a href="order_blotter.html" class="pure-menu-link">Order Blotter</a></li>
         <li class="pure-menu-item"><a href="#" class="pure-menu-link">Initiate Order</a></li>
     </ul>
 </div>
@@ -107,9 +107,9 @@
     </div>
 </div>
 </body>
-<script src="/js/jquery.min.js"></script>
-<script src="/js/jquery.cookie.min.js"></script>
-<script src="/js/checkLogin.js"></script>
+<script src="./js/jquery.min.js"></script>
+<script src="./js/jquery.cookie.min.js"></script>
+<script src="./js/checkLogin.js"></script>
 <script>
     var brokers = [];
     var product = [];
@@ -122,7 +122,7 @@
         $('#product')[0].options[0] = new Option('Select a Product', '');
         $.ajax({
             type: 'GET',
-            url: '/brokers',
+            url: './brokers',
             dataType: "json",
             contentType: "application/json",
             success: function (response) {
@@ -141,7 +141,7 @@
         });
         $.ajax({
             type: 'GET',
-            url: '/ordersNotFinished/' + $.cookie('name'),
+            url: './ordersNotFinished/' + $.cookie('name'),
             dataType: "json",
             contentType: "application/json",
             success: function (response) {
@@ -164,7 +164,7 @@
         s.options[0] = new Option('Select a Product', '');
         $.ajax({
             type: 'GET',
-            url: '/product/' + $('#broker').val(),
+            url: './product/' + $('#broker').val(),
             dataType: "json",
             contentType: "application/json",
             success: function (response) {
@@ -240,7 +240,7 @@
         }
         $.ajax({
             type: 'POST',
-            url: '/orders',
+            url: './orders',
             dataType : "json",
             processData: false,
             contentType: "application/json",

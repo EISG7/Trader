@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/pure-min.css"/>
-    <link rel="stylesheet" href="/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" href="./css/pure-min.css"/>
+    <link rel="stylesheet" href="./css/jquery.dataTables.min.css"/>
     <title>Market Depth</title>
 </head>
 <style>
@@ -50,8 +50,8 @@
     <span class="pure-menu-heading" style="color: #fff">Trader UI</span>
     <ul class="pure-menu-list">
         <li class="pure-menu-item"><a href="#" class="pure-menu-link">Market Depth</a></li>
-        <li class="pure-menu-item"><a href="/order_blotter.html" class="pure-menu-link">Order Blotter</a></li>
-        <li class="pure-menu-item"><a href="/initiate_order.html" class="pure-menu-link">Initiate Order</a></li>
+        <li class="pure-menu-item"><a href="order_blotter.html" class="pure-menu-link">Order Blotter</a></li>
+        <li class="pure-menu-item"><a href="initiate_order.html" class="pure-menu-link">Initiate Order</a></li>
     </ul>
 </div>
 <div class="content">
@@ -82,11 +82,15 @@
     </div>
 </div>
 </body>
-<script src="/js/jquery.min.js"></script>
-<script src="/js/jquery.dataTables.min.js"></script>
-<script src="/js/jquery.cookie.min.js"></script>
-<script src="/js/checkLogin.js"></script>
+<script src="./js/jquery.min.js"></script>
+<script src="./js/jquery.dataTables.min.js"></script>
+<script src="./js/jquery.cookie.min.js"></script>
+<script src="./js/checkLogin.js"></script>
 <script>
+    var str = location.pathname;
+    var arr = str.split("/");
+    delete arr[arr.length-1];
+    var dir = arr.join("/");
     var brokers = [];
     var broker, product;
     var table = $('#dataTable').DataTable({
@@ -109,7 +113,7 @@
         $('#product')[0].options[0] = new Option('Select a Product', '');
         $.ajax({
             type: 'GET',
-            url: '/brokers',
+            url: './brokers',
             dataType: "json",
             contentType: "application/json",
             success: function (response) {
@@ -126,7 +130,7 @@
                 }
             }
         });
-        wsocket = new WebSocket("ws://localhost:8080/wsTest");
+        wsocket = new WebSocket("ws://" + location.host + dir + "wsTest");
     });
     $('#broker').change(function(){
         var e = $('#product').empty();
@@ -135,7 +139,7 @@
         broker = $('#broker').val();
         $.ajax({
             type: 'GET',
-            url: '/product/' + broker,
+            url: './product/' + broker,
             dataType: "json",
             contentType: "application/json",
             success: function (response) {

@@ -52,7 +52,7 @@ public class WebSocketServer {
     }
 
     public void send(String broker, String product, String str) throws IOException {
-        if (str == null) return;
+        if (str == null) str = "[]";
         for (Session s : clients) {
             if (s.isOpen()) {
                 if (s.getUserProperties().get("broker").equals(broker) && s.getUserProperties().get("product").equals(product)) {

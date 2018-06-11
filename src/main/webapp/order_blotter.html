@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/pure-min.css"/>
-    <link rel="stylesheet" href="/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" href="./css/pure-min.css"/>
+    <link rel="stylesheet" href="./css/jquery.dataTables.min.css"/>
     <title>Order Blotter</title>
 </head>
 <style>
@@ -54,9 +54,9 @@
 <div class="pure-menu custom-restricted-width">
     <span class="pure-menu-heading" style="color: #fff">Trader UI</span>
     <ul class="pure-menu-list">
-        <li class="pure-menu-item"><a href="/market_depth.html" class="pure-menu-link">Market Depth</a></li>
+        <li class="pure-menu-item"><a href="market_depth.html" class="pure-menu-link">Market Depth</a></li>
         <li class="pure-menu-item"><a href="#" class="pure-menu-link">Order Blotter</a></li>
-        <li class="pure-menu-item"><a href="/initiate_order.html" class="pure-menu-link">Initiate Order</a></li>
+        <li class="pure-menu-item"><a href="initiate_order.html" class="pure-menu-link">Initiate Order</a></li>
     </ul>
 </div>
 <div class="content">
@@ -91,17 +91,17 @@
     </div>
 </div>
 </body>
-<script src="/js/jquery.min.js"></script>
-<script src="/js/jquery.dataTables.min.js"></script>
-<script src="/js/jquery.cookie.min.js"></script>
-<script src="/js/checkLogin.js"></script>
+<script src="./js/jquery.min.js"></script>
+<script src="./js/jquery.dataTables.min.js"></script>
+<script src="./js/jquery.cookie.min.js"></script>
+<script src="./js/checkLogin.js"></script>
 <script>
     $(function(){
         $('#dataTable').DataTable({
             bFilter: false,
             ordering: false,
             ajax: {
-                url: '/orders/' + $.cookie('name'),
+                url: './orders/' + $.cookie('name'),
                 dataSrc: 'rows'
             },
             columns: [

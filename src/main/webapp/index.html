@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/pure-min.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/pure/1.0.0/pure-min.css"/>
     <title>Trader Gateway</title>
 </head>
 <body>
@@ -31,7 +31,7 @@
         display: table;
         height: 100%;
         width: 100%;
-        background: url('/images/bright.png') repeat;
+        background: url('./images/bright.png') repeat;
     }
 
     body {
@@ -40,8 +40,8 @@
         vertical-align: middle;
     }
 </style>
-<script src="/js/jquery.min.js"></script>
-<script src="/js/jquery.cookie.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script>
     $(function(){
        var token = $.cookie('token');
@@ -49,7 +49,7 @@
        if (token != null) {
            $.ajax({
                type: 'PUT',
-               url: '/token',
+               url: './token',
                dataType : "json",
                processData: false,
                contentType: "application/json",
@@ -58,7 +58,7 @@
                success: function(response) {
                    if (response.success === true) {
                        console.log('success');
-                       location.href = '/market_depth.html';
+                       location.href = './market_depth.html';
                    }
                    else {
                        $.cookie('token', '', { expires: -1 });
@@ -86,7 +86,7 @@
             };
             $.ajax({
                 type: 'POST',
-                url: '/token',
+                url: './token',
                 dataType : "json",
                 processData: false,
                 contentType: "application/json",
@@ -100,7 +100,7 @@
                         $.cookie('token', token);
                         $.cookie('name', name);
                         $.cookie('company', company);
-                        location.href = '/market_depth.html';
+                        location.href = './market_depth.html';
                     }
                 },
                 error: function (error) {
