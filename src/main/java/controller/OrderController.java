@@ -2,6 +2,7 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import entity.MarketDepthMessage;
 import entity.OrderBlotter;
 import entity.Orders;
 import org.springframework.stereotype.Controller;
@@ -48,10 +49,29 @@ public class OrderController {
     @ResponseBody
     public Map<String, Object> placeOrder(@RequestBody String jsonStr) {
         Map<String, Object> resultMap = new HashMap<>();
-        Type type = new TypeToken<Map<String, String>>() {
+        Type type = new TypeToken<Map<String, Object>>() {
         }.getType();
-        Map<String, String> map = gson.fromJson(jsonStr, type);
+        Map<String, Object> map = gson.fromJson(jsonStr, type);
         resultMap.put("success", orderService.placeOrder(map));
         return resultMap;
     }
+
+    @PostMapping("/orderProcess")
+    @ResponseBody
+    public Map<String, Object> orderProcess(@RequestBody String jsonStr) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Orders o = gson.fromJson(jsonStr, Orders.class);
+        resultMap.put("success", orderService.putOrder(o));
+        return resultMap;
+    }
+
+    @PostMapping("/marketDepth")
+    @ResponseBody
+    public Map<String, Object> marketDepth(@RequestBody String jsonStr) {
+        Map<String, Object> resultMap = new HashMap<>();
+        MarketDepthMessage mmsg = gson.fromJson(jsonStr, MarketDepthMessage.class);
+        resultMap.put("success", orderService.putMarketDepth(mmsg));
+        return resultMap;
+    }
+
 }

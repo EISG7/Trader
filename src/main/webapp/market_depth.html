@@ -90,6 +90,8 @@
     var brokers = [];
     var broker, product;
     var table = $('#dataTable').DataTable({
+        bFilter: false,
+        ordering: false,
         columns: [
             {data: 'price'},
             {data: 'vol'},

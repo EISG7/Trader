@@ -24,9 +24,9 @@ public class MockThread extends Thread {
     public void run() {
         for (int i = 0; i < 10; i++) {
             try {
-                Thread.sleep(3000);
                 list.add(new MarketDepth(3, random.nextInt(200) % 101 + 100, random.nextInt(1260) % 11 + 1250, "Buy"));
                 ws.send("broker1","au1809", gson.toJson(list));
+                Thread.sleep(3000);
             } catch (InterruptedException | IOException e) {
                 e.printStackTrace();
             }

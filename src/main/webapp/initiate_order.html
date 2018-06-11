@@ -73,18 +73,24 @@
                     <div class="pure-control-group">
                         <label for="type">Type</label>
                         <select id="type">
-                            <option value="0">Sell</option>
-                            <option value="1">Buy - Market Order</option>
-                            <option value="2">Buy - Limit Order</option>
-                            <option value="3">Buy - Stop Order</option>
+                            <option value="1">Market Order</option>
+                            <option value="2">Limit Order</option>
+                            <option value="3">Stop Order</option>
                             <option value="4">Cancel Order</option>
+                        </select>
+                    </div>
+                    <div class="pure-control-group" id="inputSide">
+                        <label for="side">Side</label>
+                        <select id="side">
+                            <option value="1">Buy</option>
+                            <option value="0">Sell</option>
                         </select>
                     </div>
                     <div class="pure-control-group" id="inputQty">
                         <label for="quantity">Quantity</label>
                         <input id="quantity" type="number" placeholder="Quantity">
                     </div>
-                    <div class="pure-control-group" id="inputPrice">
+                    <div class="pure-control-group" id="inputPrice" style="display: none">
                         <label for="price">Unit Price</label>
                         <input id="price" type="number" placeholder="Price">
                     </div>
@@ -110,6 +116,7 @@
     var orders = [];
     var step;
     var type;
+    var side;
     $(function(){
         $('#broker')[0].options[0] = new Option('Select a Broker', '');
         $('#product')[0].options[0] = new Option('Select a Product', '');
@@ -165,7 +172,7 @@
                     product = response.product;
                     for (var i = 1; i < product.length + 1; i++) {
                         var p = product[i - 1];
-                        s.options[i] = new Option(p.code, p.id);
+                        s.options[i] = new Option(p.code, p.code);
                     }
                 }
             }
@@ -175,8 +182,7 @@
         var id = $('#product').val();
         for (var i = 0; i < product.length; i++) {
             var p = product[i];
-            if (p.id == id) {
-                console.log(p);
+            if (p.code === id) {
                 step = p.level;
                 $('#price').attr('step', step);
             }
@@ -207,12 +213,14 @@
     });
     $('#placeOrder').click(function(){
         type = $('#type').val();
+        side = $('#side').val();
         var data = {
-            name: $.cookie('name'),
-            company: $.cookie('name'),
-            type: type,
             broker: $('#broker').val(),
-            product: $('#product').val()
+            code: $('#product').val(),
+            initiatorName: $.cookie('name'),
+            initiatorComp: $.cookie('name'),
+            initiatorSide: side === "1",
+            type: parseInt(type)
         };
         var Qty = $('#quantity');
         var Pri = $('#price');
@@ -220,14 +228,15 @@
 
         switch (type) {
             case '1': // Market
-                data.quantity =Qty.val();
+                data.quantity = parseInt(Qty.val());
+                data.price = null;
                 break;
             case '4': // Cancel
-                data.orderId = Oid.val();
+                data.id = parseInt(Oid.val());
                 break;
-            default: // Sell, Limited ,Stop
-                data.quantity = Qty.val();
-                data.price = Pri.val();
+            default: // Limited ,Stop
+                data.quantity = parseInt(Qty.val());
+                data.price = parseInt(Pri.val());
         }
         $.ajax({
             type: 'POST',

@@ -3,13 +3,14 @@ package service.impl;
 import com.google.gson.Gson;
 import dao.OrderDao;
 import dao.ProductDao;
-import entity.OrderBlotter;
-import entity.Orders;
-import entity.Product;
+import entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import service.OrderService;
-import ws.WebSocketClient;
+import util.HttpUtil;
+import ws.WebSocketServer;
 
+import java.io.IOException;
 import java.util.*;
 
 public class OrderServiceImpl implements OrderService {
@@ -19,15 +20,29 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ProductDao productDao;
 
-    public WebSocketClient getWsClient() {
-        return wsClient;
+    public StringRedisTemplate getRedisTemplate() {
+        return redisTemplate;
     }
 
-    public void setWsClient(WebSocketClient wsClient) {
-        this.wsClient = wsClient;
+    public void setRedisTemplate(StringRedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
     }
 
-    private WebSocketClient wsClient;
+    private StringRedisTemplate redisTemplate;
+    @Autowired
+    private Gson gson;
+    @Autowired
+    private WebSocketServer wsServer;
+
+    public Map<String, String> getBrokers() {
+        return brokers;
+    }
+
+    public void setBrokers(Map<String, String> brokers) {
+        this.brokers = brokers;
+    }
+
+    private Map<String, String> brokers;
 
     @Override
     public List<OrderBlotter> getAllOrders(String name) {
@@ -55,65 +70,47 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean placeOrder(Map<String, String> data) {
-        try {
-            Integer type = Integer.valueOf(data.get("type"));
-            System.out.println(type);
-            String broker = data.get("broker");
-            String name = data.get("name");
-            String company = data.get("company");
-            String code = data.get("product");
-            Product pro = null;
-            Iterable<Product> it = productDao.findByBroker(broker);
-            List<Product> list = new ArrayList<>();
-            it.forEach(list::add);
-            for (Product p : list) {
-                if (p.getCode().equals(code)) pro = p;
-            }
-            Orders o;
-            String product = pro.getName();
-            String period = pro.getPeriod();
-            Gson gson = new Gson();
-            Map<String, Object> request = new HashMap<>();
-            request.put("msgType", "order");
-            request.put("type", type);
-            request.put("traderName", name);
-            request.put("traderCompany", company);
-            request.put("code", code);
-            switch (type) {
-                case 0:
-                    o = new Orders(broker, code, product, period, Integer.valueOf(data.get("price")), Integer.valueOf(data.get("quantity")), name, company, false, null, null, null );
-                    o.setType(0);
-                    o.setStatus(false);
-                    orderDao.save(o);
-                    request.put("amount", Integer.valueOf(data.get("quantity")));
-                    request.put("price", Integer.valueOf(data.get("price")));
-                    break;
-                case 1:
-                    o = new Orders(broker, code, product, period, 0, Integer.valueOf(data.get("quantity")), name, company, true, null, null, null );
-                    o.setStatus(false);
-                    o.setType(1);
-                    orderDao.save(o);
-                    request.put("amount", Integer.valueOf(data.get("quantity")));
-                    break;
-                case 4:
-                    request.put("amount", Integer.valueOf(data.get("quantity")));
-                    request.put("price", Integer.valueOf(data.get("price")));
-                    break;
-                default:
-                    o = new Orders(broker, code, product, period, 0, Integer.valueOf(data.get("quantity")), name, company, true, null, null, null );
-                    o.setStatus(false);
-                    o.setType(type);
-                    orderDao.save(o);
-                    request.put("amount", Integer.valueOf(data.get("quantity")));
-                    request.put("price", Integer.valueOf(data.get("price")));
-            }
-            wsClient.send(broker, gson.toJson(request));
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+    public boolean placeOrder(Map<String, Object> data) {
+        Integer type = ((Double) data.get("type")).intValue();
+        String broker = (String) data.get("broker");
+        String code = (String) data.get("code");
+        Product pro = null;
+        Iterable<Product> it = productDao.findByBroker(broker);
+        List<Product> list = new ArrayList<>();
+        it.forEach(list::add);
+        for (Product p : list) {
+            if (p.getCode().equals(code)) pro = p;
         }
+        data.put("type", type);
+        data.put("quantity", ((Double) data.get("quantity")).intValue());
+        data.put("product", pro.getName());
+        data.put("period", pro.getPeriod());
+        if (type == 2 || type == 3) {
+            data.put("price", ((Double) data.get("price")).intValue());
+        }
+        System.out.print(new Gson().toJson(data));
+        HttpUtil.sendPost(brokers.get(broker) + "/orders", new Gson().toJson(data));
+        return true;
+    }
+
+    @Override
+    public boolean putOrder(Orders o) {
+        orderDao.save(o);
+        return true;
+    }
+
+    @Override
+    public boolean putMarketDepth(MarketDepthMessage msg) {
+        List<MarketDepth> mdlist = msg.getMarketDepth();
+        Collections.sort(mdlist);
+        String list = gson.toJson(mdlist);
+        redisTemplate.opsForValue().set(msg.genKey(), list);
+        try {
+            wsServer.send(msg.getBroker(), msg.getProduct(), list);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
 

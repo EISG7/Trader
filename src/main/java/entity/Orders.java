@@ -7,24 +7,24 @@ import java.sql.Timestamp;
 @Table
 public class Orders implements Comparable<Orders>{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String broker;
     private String code;
     private String product;
     private String period;
-    private int price;
-    private int quantity;
+    private Integer price;
+    private Integer quantity;
     private String initiatorName;
     private String initiatorComp;
-    private boolean initiatorSide; // true: buy, false: sell
+    private Boolean initiatorSide; // true: buy, false: sell
     private String completionName;
     private String completionComp;
     private Timestamp completionTime;
-    private int type;              // 0, 1, 2, 3, 4
+    private int type;              // 1, 2, 3, 4
     private boolean status;     // true: finished, false: not finished
 
-    public Orders(String broker, String code, String product, String period, int price, int quantity, String initiatorName, String initiatorComp, boolean initiatorSide, String completionName, String completionComp, Timestamp completionTime) {
+    public Orders(String broker, String code, String product, String period, int price, Integer quantity, String initiatorName, String initiatorComp, Boolean initiatorSide, String completionName, String completionComp, Timestamp completionTime) {
         this.broker = broker;
         this.code = code;
         this.product = product;
@@ -82,19 +82,19 @@ public class Orders implements Comparable<Orders>{
         this.period = period;
     }
 
-    public int getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
@@ -154,11 +154,11 @@ public class Orders implements Comparable<Orders>{
         this.type = type;
     }
 
-    public boolean getStatus() {
+    public Boolean getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(Boolean status) {
         this.status = status;
     }
 

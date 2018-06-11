@@ -1,6 +1,6 @@
 package entity;
 
-public class MarketDepth {
+public class MarketDepth implements Comparable<MarketDepth> {
     private Integer level;
     private Integer vol;
     private Integer price;
@@ -46,5 +46,10 @@ public class MarketDepth {
 
     public void setSide(String side) {
         this.side = side;
+    }
+
+    @Override
+    public int compareTo(MarketDepth o) {
+        return o.price.compareTo(this.price);
     }
 }
